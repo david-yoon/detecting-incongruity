@@ -20,6 +20,11 @@
 
 
 ## [cite]
-- TBD
+- @article{yoon2018detecting,
+  title={Detecting Incongruity Between News Headline and Body Text via a Deep Hierarchical Encoder},
+  author={Yoon, Seunghyun and Park, Kunwoo and Shin, Joongbo and Lim, Hongjun and Won, Seungpil and Cha, Meeyoung and Jung, Kyomin},
+  journal={arXiv preprint arXiv:1811.07066},
+  year={2018}
+}
 
 ----------
