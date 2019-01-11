@@ -1,3 +1,17 @@
+# TBD
+preprocessing
+
+# too big
+final_model
+data/para
+data/whole
+save
+graph
+
+# log
+output.txt
+
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
