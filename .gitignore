@@ -3,8 +3,7 @@ preprocessing
 
 # too big
 final_model
-data/para
-data/whole
+data/
 save
 graph
 
