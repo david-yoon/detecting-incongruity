@@ -37,21 +37,20 @@
 	> /src_whole/ <br>
 	> ./train_AHDE.sh : train dataset with AHDE model and "whole" method <br>
 - results will be displayed in console <br>
-- results will be saved to "./src_whole>output.txt" <br>
 
 
 <space>**※ hyper parameters**
 - major parameters : edit from "train_AHDE.sh" <br>
-- other parameters : edit from "./src_whole/params.py"
+- other parameters : edit from "/src_whole/params.py"
 
 ### [inference phase]
 - each source code folder contains a inference script
 - you need to modify the "model_path" in the "eval_AHDE.sh" to a proper path
 	> << for example >> <br>
-	> ./src_whole/
+	> /src_whole/ <br>
 	> ./eval_AHDE.sh   : evaluate test dataset with AHDE model and "whole" method
 - results will be displayed in console <br>
-- scores for the testset will be stored in "output.txt"
+- scores for the testset will be stored in "output.txt" <br>
 
 
 ----------
