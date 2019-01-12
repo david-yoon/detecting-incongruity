@@ -40,8 +40,8 @@
 
 
 <space>**※ hyper parameters**
-- major parameters : edit from "train_AHDE.sh" <br>
-- other parameters : edit from "/src_whole/params.py"
+- major parameters : edit from "./train_AHDE.sh" <br>
+- other parameters : edit from "./params.py"
 
 ### [inference phase]
 - each source code folder contains a inference script
@@ -50,7 +50,7 @@
 	> /src_whole/ <br>
 	> ./eval_AHDE.sh   : evaluate test dataset with AHDE model and "whole" method
 - results will be displayed in console <br>
-- scores for the testset will be stored in "output.txt" <br>
+- scores for the testset will be stored in "./output.txt" <br>
 
 
 ----------
