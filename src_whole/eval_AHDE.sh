@@ -1,1 +1,1 @@
-CUDA_VISIBLE_DEVICES=1 python eval_AHDE.py --model_path "model_ahde" --batch_size 250 --encoder_size 80 --context_size 10 --encoderR_size 49 --num_layer 1 --hidden_dim 300  --num_layer_con 1 --hidden_dim_con 300 --embed_size 300
+python eval_AHDE.py --model_path "model_ahde" --batch_size 250 --encoder_size 80 --context_size 10 --encoderR_size 49 --num_layer 1 --hidden_dim 300  --num_layer_con 1 --hidden_dim_con 300 --embed_size 300
