@@ -37,6 +37,7 @@
 	> /src_whole/ <br>
 	> ./train_AHDE.sh : train dataset with AHDE model and "whole" method <br>
 - results will be displayed in console <br>
+- final result will be stored in "./TEST_run_result.txt" <br>
 
 
 <space>**※ hyper parameters**
