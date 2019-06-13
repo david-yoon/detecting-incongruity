@@ -7,14 +7,15 @@
 
 ----------
 
-### [requirements]
-	tensorflow==1.4 (tested on cuda-8.0, cudnn-6.0)
-	python==2.7
-	scikit-learn==0.20.0
-	nltk==3.3
+### [Requirements]
+```
+  tensorflow==1.4 (tested on cuda-8.0, cudnn-6.0)
+  python==2.7
+  scikit-learn==0.20.0
+  nltk==3.3
+```
 
-
-### [download data corpus]
+### [Download Dataset]
 - download preprocessed dataset with the following script
 	> cd data <br>
 	> sh download_dataset.sh
@@ -23,7 +24,7 @@
 	>	/data/whole
 
 
-### [source code]
+### [Source Code]
 - according to the training method
 	 >	 whole-type: using the codes in the src_whole <br>
 	 >	 para-type: using the codes in the src_para <br>
@@ -31,11 +32,13 @@
 ----------
 
 
-### [training phase]
+### [Training Phase]
 - each source code folder contains a training script
 	> << for example >> <br>
-	> /src_whole/ <br>
-	> ./train_AHDE.sh : train dataset with AHDE model and "whole" method <br>
+	> train dataset with AHDE model and "whole" method <br>
+```bash
+	src_whole> sh train_AHDE.sh
+```
 - results will be displayed in console <br>
 - final result will be stored in "./TEST_run_result.txt" <br>
 
@@ -44,20 +47,31 @@
 - major parameters : edit from "./train_AHDE.sh" <br>
 - other parameters : edit from "./params.py"
 
-### [inference phase]
+### [Inference Phase]
 - each source code folder contains a inference script
 - you need to modify the "model_path" in the "eval_AHDE.sh" to a proper path
 	> << for example >> <br>
-	> /src_whole/ <br>
-	> ./eval_AHDE.sh   : evaluate test dataset with AHDE model and "whole" method
+	> evaluate test dataset with AHDE model and "whole" method <br>
+```bash
+	src_whole> sh eval_AHDE.sh
+```
 - results will be displayed in console <br>
 - scores for the testset will be stored in "./output.txt" <br>
 
-
 ----------
 
-### [raw dataset]
-- TBD
+
+### [Dataset Statistics]
+* whole case <br>
+
+  | data  |  Samples  | tokens (avg)<br> headline| tokens (avg) <br> body text |
+  |:-----:|:---------:|:------------:|:---------:|
+  | train | 1,700,000 |        13.71 |    499.81 |
+  |  dev  |   100,000 |        13.69 |    499.03 |
+  |  test |   100,000 |        13.55 |    769.23 |
+
+* Note <br>
+	> We crawled articles for "dev" and "test" dataset from different media outlets. <br>
 
 
 ----------
