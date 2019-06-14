@@ -99,13 +99,13 @@ def run_test(sess, model, batch_gen, data, IS_TEST=False):
     sum_batch_ce = sum(batch_ce)
     
     if (IS_TEST):
-        value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
-        value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
-        value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
-    else:
         value1 = summary_pb2.Summary.Value(tag="test_loss", simple_value=sum_batch_ce)
         value2 = summary_pb2.Summary.Value(tag="test_accuracy", simple_value=accr )
         value3 = summary_pb2.Summary.Value(tag="test_auroc", simple_value=auroc )
+    else:
+        value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
+        value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
+        value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
         
     summary = summary_pb2.Summary(value=[value1, value2, value3])
     
