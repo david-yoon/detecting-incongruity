@@ -437,8 +437,10 @@ def train_model(model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_
 
                         early_stop_count = Params.MAX_EARLY_STOP_COUNT
                         
-                        test_ce, test_accr, test_probs, test_auroc, _ = run_test(sess=sess, model=model, batch_gen=batch_gen,
+                        test_ce, test_accr, test_probs, test_auroc, test_summary = run_test(sess=sess, model=model, batch_gen=batch_gen,
                                             data=batch_gen.test_set)
+                        
+                        writer.add_summary( test_summary, global_step=model.global_step.eval() )
                         
                         best_dev_accr = dev_accr
                         best_test_accr = test_accr

@@ -24,7 +24,7 @@ from sklearn.metrics import roc_auc_score
         probs  : 
         labels : 
 """
-def run_test(sess, model, batch_gen, data):
+def run_test(sess, model, batch_gen, data, IS_TEST=False):
     
     batch_ce = []
     labels = []
@@ -92,15 +92,21 @@ def run_test(sess, model, batch_gen, data):
     accr = accuracy_score(y_true=labels, y_pred=pred_from_probs)
     auroc = roc_auc_score(y_true=labels, y_score=probs)
     
-    with open('./output.txt', 'wb') as f:
-        for pr in probs:
-            f.write(str(pr[0]) + '\n')
+    #with open('./output.txt', 'wb') as f:
+    #    for pr in probs:
+    #        f.write(str(pr[0]) + '\n')
     
     sum_batch_ce = sum(batch_ce)
     
-    value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
-    value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
-    value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
+    if (IS_TEST):
+        value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
+        value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
+        value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
+    else:
+        value1 = summary_pb2.Summary.Value(tag="test_loss", simple_value=sum_batch_ce)
+        value2 = summary_pb2.Summary.Value(tag="test_accuracy", simple_value=accr )
+        value3 = summary_pb2.Summary.Value(tag="test_auroc", simple_value=auroc )
+        
     summary = summary_pb2.Summary(value=[value1, value2, value3])
     
     return sum_batch_ce, accr, probs, auroc, summary
