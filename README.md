@@ -1,13 +1,14 @@
-# detecting-incongruity
+detecting-incongruity
+------------------------------------------------------------
 
-
-## This repository contains the source code & data corpus used in the following paper,
+This repository contains the source code & data corpus used in the following paper,
 
 **Detecting Incongruity Between News Headline and Body Text via a Deep Hierarchical Encoder**, AAAI-19, <a href="https://arxiv.org/abs/1811.07066">paper</a>
 
-----------
+![alt tag](./assets/AHDE.png)
 
-### [Requirements]
+Requirements
+-------------
 ```
   tensorflow==1.4 (tested on cuda-8.0, cudnn-6.0)
   python==2.7
@@ -15,7 +16,8 @@
   nltk==3.3
 ```
 
-### [Download Dataset]
+Download Dataset
+-------------
 - download preprocessed dataset with the following script
 	> cd data <br>
 	> sh download_dataset.sh
@@ -24,15 +26,16 @@
 	>	/data/whole
 
 
-### [Source Code]
+Source Code
+-------------
 - according to the training method
 	 >	 whole-type: using the codes in the src_whole <br>
 	 >	 para-type: using the codes in the src_para <br>
 
-----------
 
 
-### [Training Phase]
+Training Phase
+-------------
 - each source code folder contains a training script
 	> << for example >> <br>
 	> train dataset with AHDE model and "whole" method <br>
@@ -47,7 +50,9 @@
 - major parameters : edit from "./train_AHDE.sh" <br>
 - other parameters : edit from "./params.py"
 
-### [Inference Phase]
+
+Inference Phase
+-------------
 - each source code folder contains a inference script
 - you need to modify the "model_path" in the "eval_AHDE.sh" to a proper path
 	> << for example >> <br>
@@ -58,10 +63,10 @@
 - results will be displayed in console <br>
 - scores for the testset will be stored in "./output.txt" <br>
 
-----------
 
 
-### [Dataset Statistics]
+Dataset Statistics
+-------------
 * whole case <br>
 
   | data  |  Samples  | tokens (avg)<br> headline| tokens (avg) <br> body text |
@@ -74,10 +79,10 @@
 	> We crawled articles for "dev" and "test" dataset from different media outlets. <br>
 
 
-----------
 
 
-### [cite]
+cite
+-------------
 - Please cite our paper, when you use our code | dataset | model
 
   >	@article{yoon2018detecting, <br>
