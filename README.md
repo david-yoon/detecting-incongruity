@@ -41,7 +41,7 @@ Training Phase
 	> << for example >> <br>
 	> train dataset with AHDE model and "whole" method <br>
 ```bash
-	src_whole> sh train_AHDE.sh
+	src_whole$ sh train_AHDE.sh
 ```
 - results will be displayed in console <br>
 - final result will be stored in "./TEST_run_result.txt" <br>
@@ -59,7 +59,7 @@ Inference Phase
 	> << for example >> <br>
 	> evaluate test dataset with AHDE model and "whole" method <br>
 ```bash
-	src_whole> sh eval_AHDE.sh
+	src_whole$ sh eval_AHDE.sh
 ```
 - results will be displayed in console <br>
 - scores for the testset will be stored in "./output.txt" <br>
