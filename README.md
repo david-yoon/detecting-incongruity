@@ -5,7 +5,8 @@ This repository contains the source code & data corpus used in the following pap
 
 **Detecting Incongruity Between News Headline and Body Text via a Deep Hierarchical Encoder**, AAAI-19, <a href="https://arxiv.org/abs/1811.07066">paper</a>
 
-![alt tag](./assets/AHDE.png){: width="40%" height="40%"}
+<img src="./assets/model.png" width="40%">
+
 
 Requirements
 -------------
