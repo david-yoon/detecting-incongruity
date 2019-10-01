@@ -1,12 +1,15 @@
 # test
 *TEST*
 
+# data
+data/para
+data/whole
+
 # TBD
 preprocessing
 
 # too big
 final_model
-data/
 save
 graph
 

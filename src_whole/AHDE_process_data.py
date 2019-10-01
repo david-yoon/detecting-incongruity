@@ -7,15 +7,15 @@ what    : AHDE data process
 import numpy as np
 import random
 import pickle
-from params import Params
-
 
 
 class ProcessData:
     
-    def __init__(self, is_test, evaluation_file_name=''):
+    def __init__(self, params, is_test, evaluation_file_name=''):
         
         print 'IS_TEST = ' + str(is_test)
+        
+        self.params = params
         
         self.is_test = is_test
         self.evaluation_file_name = evaluation_file_name
@@ -43,11 +43,11 @@ class ProcessData:
         
     def load_data(self):
         
-        if Params.IS_DEBUG :
+        if self.params.IS_DEBUG :
             print 'load data : DEBUG mode'
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( Params.DATA_DIR + 'whole/' + Params.DATA_DEBUG_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TEST_LABEL)
+            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR +  self.params.DATA_DEBUG_TITLE_BODY, 'r') )
+            self.test_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -60,8 +60,8 @@ class ProcessData:
         elif self.is_test:
             print 'load data : TEST mode'
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( Params.DATA_DIR + 'whole/' + Params.DATA_TEST_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TEST_LABEL)
+            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR + self.params.DATA_TEST_TITLE_BODY, 'r') )
+            self.test_data['y'] = np.load(self.params.DATA_DIR + self.params.DATA_TEST_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -73,18 +73,18 @@ class ProcessData:
 
         else:
             print 'load data : TRAIN mode'
-            self.train_data['c'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TRAIN_TITLE)
-            self.train_data['r'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TRAIN_BODY)
-            self.train_data['y'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TRAIN_LABEL)
+            self.train_data['c'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_TITLE)
+            self.train_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_BODY)
+            self.train_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_LABEL)
 
-            self.valid_data['c'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_DEV_TITLE)
-            self.valid_data['r'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_DEV_BODY)
-            self.valid_data['y'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_DEV_LABEL)
+            self.valid_data['c'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_TITLE)
+            self.valid_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_BODY)
+            self.valid_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_LABEL)
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( Params.DATA_DIR + 'whole/' + Params.DATA_TEST_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(Params.DATA_DIR + 'whole/' + Params.DATA_TEST_LABEL)
+            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR +  self.params.DATA_TEST_TITLE_BODY, 'r') )
+            self.test_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
                     
-        self.voca = pickle.load(open(Params.DATA_DIR + 'whole/' + Params.VOCA_FILE_NAME, 'r') )
+        self.voca = pickle.load(open(self.params.DATA_DIR +  self.params.VOCA_FILE_NAME, 'r') )
         
         print 'add pad index as : ' + str(self.voca[''])
         self.pad_index = self.voca['']
@@ -107,7 +107,7 @@ class ProcessData:
     # convert to soucre, target, label
     def create_data_set(self, input_data, output_set, set_type):
         
-        if Params.IS_DEBUG is not True:
+        if self.params.IS_DEBUG is not True:
             if self.is_test & (set_type != 'TEST') : return
         
         data_len = len(input_data['c'])
@@ -136,8 +136,8 @@ class ProcessData:
 
     def get_glove(self):
         
-        print 'load.... pre-trained embedding : ' + Params.GLOVE_FILE_NAME
-        self.W_glove_init = np.load(open(Params.DATA_DIR + Params.GLOVE_FILE_NAME, 'r'))
+        print 'load.... pre-trained embedding : ' + self.params.GLOVE_FILE_NAME
+        self.W_glove_init = np.load(open(self.params.DATA_DIR + self.params.GLOVE_FILE_NAME, 'r'))
         
         return self.W_glove_init
     

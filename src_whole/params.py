@@ -4,7 +4,7 @@ class Params:
     ################################
     #     dataset
     ################################
-    DATA_DIR         = '../data/'
+    DATA_DIR         = '../data/target_aaai_whole/'
 
     DATA_TRAIN_TITLE = 'train/train_title.npy'
     DATA_TRAIN_BODY = 'train/train_body.npy'
