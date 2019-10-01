@@ -4,10 +4,10 @@
 # data
 data/para
 data/whole
-data/NELA_18_based
+data/raw
+data/processed
+*.pkl
 
-# TBD
-preprocessing
 
 # too big
 final_model
