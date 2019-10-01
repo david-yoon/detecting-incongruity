@@ -38,9 +38,7 @@ def main(model_path, batch_size, encoder_size, context_size, encoderR_size, num_
                                                 lr = lr,
                                                 embed_size=embed_size,
                                                 use_glove = 1,
-                                                fix_embed = fix_embed,
-                                                memory_dim=0,
-                                                topic_size=0
+                                                fix_embed = fix_embed
                                                 )
         
     model.build_graph()

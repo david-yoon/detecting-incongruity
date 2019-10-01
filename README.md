@@ -26,6 +26,11 @@ Download Dataset
 	>	/data/para <br>
 	>	/data/whole
 
+- format (example)
+	> test_title.npy: [100000, 49] - (#samples, #token (index)) <br>
+	> test_body: [100000, 1200] - (#samples, #token (index)) <br>
+	> test_label: [100000] - (#samples) <br>
+    > dic_mincutN.txt: dictionary
 
 Source Code
 -------------
@@ -86,9 +91,12 @@ cite
 -------------
 - Please cite our paper, when you use our code | dataset | model
 
-  >	@article{yoon2018detecting, <br>
-  >		title={Detecting Incongruity Between News Headline and Body Text via a Deep Hierarchical Encoder}, <br>
-  >		author={Yoon, Seunghyun and Park, Kunwoo and Shin, Joongbo and Lim, Hongjun and Won, Seungpil and Cha, Meeyoung and Jung, Kyomin}, <br>
-  >		journal={arXiv preprint arXiv:1811.07066}, <br>
-  >		year={2018} <br>
-  >		}
+	> @inproceedings{yoon2019detecting,<br>
+> title={Detecting Incongruity between News Headline and Body Text via a Deep Hierarchical Encoder},<br>
+> author={Yoon, Seunghyun and Park, Kunwoo and Shin, Joongbo and Lim, Hongjun and Won, Seungpil and Cha, Meeyoung and Jung, Kyomin},<br>
+>  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},<br>
+>  volume={33},<br>
+>  pages={791--800},<br>
+>  year={2019}<br>
+> }
+	

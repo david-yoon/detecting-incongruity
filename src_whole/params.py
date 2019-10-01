@@ -4,7 +4,7 @@ class Params:
     ################################
     #     dataset
     ################################
-    DATA_DIR         = '../data/target_aaai_whole/'
+    DATA_DIR         = ''
 
     DATA_TRAIN_TITLE = 'train/train_title.npy'
     DATA_TRAIN_BODY = 'train/train_body.npy'
@@ -20,7 +20,7 @@ class Params:
     DATA_DEBUG_TITLE_BODY  = 'debug/data_whole_debug.pkl'
     
     
-    VOCA_FILE_NAME = 'dic_mincutN.pkl'
+    VOCA_FILE_NAME = 'dic_mincutN.txt'
     GLOVE_FILE_NAME = 'W_embedding.npy'
 
 
@@ -31,7 +31,7 @@ class Params:
     num_till_max_epoch      = 8
     
     CAL_ACCURACY_FROM       = 0
-    MAX_EARLY_STOP_COUNT    = 10
+    MAX_EARLY_STOP_COUNT    = 5
     EPOCH_PER_VALID_FREQ    = 0.3
     is_embeddign_train      = True     # True is better
 
@@ -43,6 +43,10 @@ class Params:
     ################################
     #     model
     ################################
+    
+    chunk_tkn_index          = 3    #<EOP>
+    pad_index                = 0    #''
+    
     reverse_bw               = True
     is_text_encoding_bidir   = False
     is_chunk_encoding_bidir  = True
@@ -51,10 +55,6 @@ class Params:
     is_chunk_residual        = False
     
     add_attention            = True
-    add_LTC                  = False
-    LTC_topic_size           = 3
-    LTC_memory_dim           = 256
-    LTC_dr_prob              = 0.8
     
     
     ################################

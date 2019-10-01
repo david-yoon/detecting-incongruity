@@ -11,6 +11,7 @@ from tensorflow.contrib.rnn import DropoutWrapper
 
 from tensorflow.core.framework import summary_pb2
 
+from AHDE_Model import AttnHrDualEncoderModel
 from AHDE_process_data import *
 from AHDE_evaluation import *
 from params import *
@@ -174,8 +175,8 @@ def create_dir(dir_name):
 def main(params,
          batch_size, encoder_size, context_size, encoderR_size, num_layer, hidden_dim, num_layer_con, hidden_dim_con,
          embed_size, num_train_steps, lr, valid_freq, is_save, graph_dir_name, is_test, 
-         use_glove, fix_embed,
-         memory_dim, topic_size):
+         use_glove, fix_embed
+        ):
     
     if is_save is 1:
         create_dir('save/')
@@ -202,9 +203,7 @@ def main(params,
                                lr=lr,
                                embed_size=embed_size,
                                use_glove = use_glove,
-                               fix_embed = fix_embed,
-                               memory_dim = memory_dim,
-                               topic_size=topic_size
+                               fix_embed = fix_embed
                                )
     
     model.build_graph()
@@ -241,10 +240,6 @@ if __name__ == '__main__':
     p.add_argument('--use_glove', type=int, default=0)
     p.add_argument('--fix_embed', type=int, default=0)
     
-    # latent topic
-    p.add_argument('--memory_dim', type=int, default=32)
-    p.add_argument('--topic_size', type=int, default=0)
-    
     args = p.parse_args()
     
     if args.corpus == ('aaai19_whole'): 
@@ -258,7 +253,7 @@ if __name__ == '__main__':
     
     
     graph_name = args.graph_prefix + \
-                    str(args.corpus) + \
+                    '_' + str(args.corpus) + \
                     '_b' + str(args.batch_size) + \
                     '_es' + str(args.encoder_size) + \
                     '_eRs' + str(args.encoderR_size) + \
@@ -268,9 +263,7 @@ if __name__ == '__main__':
                     '_Lc' + str(args.num_layer_con) + \
                     '_Hc' + str(args.hidden_dim_con) + \
                     '_G' + str(args.use_glove) + \
-                    '_FIX' + str(args.fix_embed) + \
-                    '_M' + str(args.memory_dim) + \
-                    '_T' + str(args.topic_size)
+                    '_FIX' + str(args.fix_embed)
 
     if params.dr_text_in   != 1.0 : graph_name = graph_name + '_drTi' +str(params.dr_text_in)
     if params.dr_text_out != 1.0 : graph_name = graph_name + '_drTo' +str(params.dr_text_out)
@@ -305,7 +298,5 @@ if __name__ == '__main__':
         graph_dir_name=graph_name,
         is_test=args.is_test,
         use_glove=args.use_glove,
-        fix_embed=args.fix_embed,
-        memory_dim=args.memory_dim,
-        topic_size=args.topic_size
+        fix_embed=args.fix_embed
         )

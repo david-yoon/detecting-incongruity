@@ -11,14 +11,13 @@ import pickle
 
 class ProcessData:
     
-    def __init__(self, params, is_test, evaluation_file_name=''):
+    def __init__(self, params, is_test=False):
         
         print 'IS_TEST = ' + str(is_test)
         
         self.params = params
         
         self.is_test = is_test
-        self.evaluation_file_name = evaluation_file_name
         
         self.voca = None
         self.pad_index = 0
@@ -84,23 +83,17 @@ class ProcessData:
             _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR +  self.params.DATA_TEST_TITLE_BODY, 'r') )
             self.test_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
                     
-        self.voca = pickle.load(open(self.params.DATA_DIR +  self.params.VOCA_FILE_NAME, 'r') )
+        with open(self.params.DATA_DIR +  self.params.VOCA_FILE_NAME) as f:
+                self.voca = f.readlines()
+                self.voca = [x.strip() for x in self.voca]
         
-        print 'add pad index as : ' + str(self.voca[''])
-        self.pad_index = self.voca['']
-        
-        for w in self.voca:
-            self.index2word[self.voca[w]] = w
+        print 'add pad index as : ' + str(self.params.pad_index)
+        self.pad_index = self.params.pad_index
         
         print '[completed] load data'
         print 'voca size (include _PAD_, _UNK_): ' + str( len(self.voca) )
         
 
-    def func(input) :
-        # <EOS> == 3
-        return ' '.join(str(e) for e in input).split(' 3 ')[:-1]
-        
-        
     # create train set : 
     # source_ids : 
     # target_ids : 
@@ -114,7 +107,7 @@ class ProcessData:
         
         for index in xrange(data_len):
             
-            delimiter = ' ' +  str(self.voca['<EOP>']) + ' '
+            delimiter = ' ' +  str(self.params.chunk_tkn_index) + ' '
             # last == padding
             turn =[x.strip() for x in (' '.join(str(e) for e in input_data['r'][index])).split(delimiter)[:-1] ]
             turn = [ x for x in turn if len(x) >1]

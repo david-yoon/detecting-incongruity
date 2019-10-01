@@ -14,21 +14,19 @@ from tensorflow.core.framework import summary_pb2
 from AHDE_process_data import *
 from AHDE_evaluation import *
 from layers import add_GRU
-from params import self.params
 
 
 class AttnHrDualEncoderModel:
     
     
     def __init__(self, 
-                 param,
+                 params,
                  voca_size, batch_size,
                  encoder_size, context_size, encoderR_size, 
                  num_layer, hidden_dim,
                  num_layer_con, hidden_dim_con,
                  lr, embed_size, 
-                 use_glove, fix_embed,
-                 memory_dim, topic_size):
+                 use_glove, fix_embed):
         
         self.params = params
         
@@ -52,9 +50,6 @@ class AttnHrDualEncoderModel:
         self.dr_con_in   = self.params.dr_con_in
         self.dr_con_out = self.params.dr_con_out
         
-        self.memory_dim = memory_dim
-        self.topic_size = topic_size
-    
         self.encoder_inputs = []
         self.context_inputs = []
         self.encoderR_inputs =[]
