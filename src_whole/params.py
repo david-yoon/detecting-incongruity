@@ -62,5 +62,20 @@ class Params:
     ################################
     #     etc
     ################################
-    IS_DEBUG                 = True     # use short dataset
+    IS_DEBUG                 = False     # use short dataset
 
+
+class Params_NELA18(Params):
+
+    ################################
+    #     model
+    ################################
+    
+    chunk_tkn_index          = 131531    #<EOP>
+    pad_index                = 0         #''
+    
+    
+    ################################
+    #     etc
+    ################################
+    IS_DEBUG                 = False     # use short dataset
