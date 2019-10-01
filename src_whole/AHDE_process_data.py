@@ -43,10 +43,11 @@ class ProcessData:
     def load_data(self):
         
         if self.params.IS_DEBUG :
-            print 'load data : DEBUG mode'
+            print ('load data : DEBUG mode', self.params.DATA_DEBUG_TITLE)
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR +  self.params.DATA_DEBUG_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
+            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_TITLE)
+            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_BODY)
+            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -57,10 +58,11 @@ class ProcessData:
             self.valid_data['y'] = self.test_data['y']
             
         elif self.is_test:
-            print 'load data : TEST mode'
+            print ('load data : TEST mode', self.params.DATA_TEST_TITLE)
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR + self.params.DATA_TEST_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(self.params.DATA_DIR + self.params.DATA_TEST_LABEL)
+            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_TITLE)
+            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_BODY)
+            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -71,7 +73,7 @@ class ProcessData:
             self.valid_data['y'] = self.test_data['y']
 
         else:
-            print 'load data : TRAIN mode'
+            print ('load data : TRAIN mode', self.params.DATA_TRAIN_TITLE)
             self.train_data['c'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_TITLE)
             self.train_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_BODY)
             self.train_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_LABEL)
@@ -80,8 +82,9 @@ class ProcessData:
             self.valid_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_BODY)
             self.valid_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_LABEL)
             
-            _, self.test_data['c'], self.test_data['r'] = pickle.load( open( self.params.DATA_DIR +  self.params.DATA_TEST_TITLE_BODY, 'r') )
-            self.test_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
+            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_TITLE)
+            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_BODY)
+            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
                     
         with open(self.params.DATA_DIR +  self.params.VOCA_FILE_NAME) as f:
                 self.voca = f.readlines()

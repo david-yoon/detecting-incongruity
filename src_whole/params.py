@@ -14,11 +14,13 @@ class Params:
     DATA_DEV_BODY =  'dev/dev_body.npy'
     DATA_DEV_LABEL = 'dev/dev_label.npy'
     
-    DATA_TEST_TITLE_BODY  = 'test/data_whole_test.pkl'
-    DATA_TEST_LABEL       = 'test/test_label.npy'
+    DATA_TEST_TITLE =  'test/test_title.npy'
+    DATA_TEST_BODY =  'test/test_body.npy'
+    DATA_TEST_LABEL = 'test/test_label.npy'
 
-    DATA_DEBUG_TITLE_BODY  = 'debug/data_whole_debug.pkl'
-    
+    DATA_DEBUG_TITLE = 'debug/debug_title.npy'
+    DATA_DEBUG_BODY =  'debug/debug_body.npy'
+    DATA_DEBUG_LABEL = 'debug/debug_label.npy'
     
     VOCA_FILE_NAME = 'dic_mincutN.txt'
     GLOVE_FILE_NAME = 'W_embedding.npy'
@@ -60,5 +62,5 @@ class Params:
     ################################
     #     etc
     ################################
-    IS_DEBUG                 = False     # use short dataset
+    IS_DEBUG                 = True     # use short dataset
 
