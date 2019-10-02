@@ -65,7 +65,7 @@ class Params:
     IS_DEBUG                 = False     # use short dataset
 
 
-class Params_NELA18(Params):
+class Params_NELA17(Params):
 
     ################################
     #     model

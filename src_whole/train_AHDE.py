@@ -245,13 +245,13 @@ if __name__ == '__main__':
     if args.corpus == ('aaai19_whole'): 
         print('[INFO] corpus: AAAI-19')
         params    = Params()
-        params.DATA_DIR = '../data/target_aaai_whole/'
+        params.DATA_DIR = '../data/target_aaai-19_whole/'
     
     
-    elif args.corpus == ('nela18_whole'):
-        print('[INFO] corpus: NELA-18')
-        params    = Params_NELA18()
-        params.DATA_DIR = '../data/target_nela18_whole/'
+    elif args.corpus == ('nela17_whole'):
+        print('[INFO] corpus: NELA-17')
+        params    = Params_NELA17()
+        params.DATA_DIR = '../data/target_nela-17_whole/'
     
     
     graph_name = args.graph_prefix + \
