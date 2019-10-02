@@ -1,6 +1,6 @@
 
 ######################################
-# News Dataset
+# News Dataset (aaai=19)
 # 
 ######################################
 CUDA_VISIBLE_DEVICES=0 python train_AHDE.py --batch_size 256 --encoder_size 80 --context_size 10 --encoderR_size 49 --num_layer 1 --hidden_dim 300  --num_layer_con 1 --hidden_dim_con 300 --embed_size 300 --lr 0.001 --num_train_steps 100000 --is_save 0 --graph_prefix 'ahde' --corpus 'aaai19_whole'
