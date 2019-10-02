@@ -33,7 +33,7 @@ class Params:
     num_till_max_epoch      = 8
     
     CAL_ACCURACY_FROM       = 0
-    MAX_EARLY_STOP_COUNT    = 5
+    MAX_EARLY_STOP_COUNT    = 10
     EPOCH_PER_VALID_FREQ    = 0.3
     is_embeddign_train      = True     # True is better
 
@@ -73,6 +73,13 @@ class Params_NELA17(Params):
     
     chunk_tkn_index          = 131531    #<EOP>
     pad_index                = 0         #''
+    
+    
+    ################################
+    #     train
+    ################################
+    CAL_ACCURACY_FROM       = 0
+    MAX_EARLY_STOP_COUNT    = 10
     
     
     ################################

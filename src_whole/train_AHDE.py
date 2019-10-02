@@ -242,13 +242,13 @@ if __name__ == '__main__':
     
     args = p.parse_args()
     
-    if args.corpus == ('aaai19_whole'): 
+    if args.corpus == ('aaai-19_whole'): 
         print('[INFO] corpus: AAAI-19')
         params    = Params()
         params.DATA_DIR = '../data/target_aaai-19_whole/'
     
     
-    elif args.corpus == ('nela17_whole'):
+    elif args.corpus == ('nela-17_whole'):
         print('[INFO] corpus: NELA-17')
         params    = Params_NELA17()
         params.DATA_DIR = '../data/target_nela-17_whole/'
