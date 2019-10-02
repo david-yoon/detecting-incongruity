@@ -71,7 +71,7 @@ class Params_NELA17(Params):
     #     model
     ################################
     
-    chunk_tkn_index          = 131531    #<EOP>
+    chunk_tkn_index          = 144441    #<EOP>
     pad_index                = 0         #''
     
     
