@@ -2,12 +2,11 @@
 *TEST*
 
 # data
-data/para
-data/whole
-data/raw
-data/processed
+data/aaai-19
+data/nela-17
+data/embedding
 *.pkl
-
+raw
 
 # too big
 final_model
