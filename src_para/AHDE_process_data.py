@@ -8,7 +8,7 @@ import numpy as np
 import random
 import pickle
 from params import Params
-
+from tqdm import tqdm
 
 class ProcessData:
     
@@ -111,7 +111,7 @@ class ProcessData:
         
         data_len = len(input_data['c'])
         
-        for index in xrange(data_len):
+        for index in tqdm(xrange(data_len)):
             
             delimiter = ' ' +  str(self.voca['<EOS>']) + ' '
             

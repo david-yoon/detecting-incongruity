@@ -10,6 +10,7 @@ import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_auc_score
 from util_pick_max import pick_max_prob
+from tqdm import tqdm
 
 """
     desc  : similar to evaluation in whole-hrde, excpets para-method needs to consider the differences btw data & label
@@ -38,7 +39,7 @@ def run_test(sess, model, batch_gen, data, is_testset=False):
     itr_loop = len(data) / model.batch_size
     
     # run 1 more time ( for batch remaining )
-    for test_itr in xrange( itr_loop + 1 ):
+    for test_itr in tqdm(xrange( itr_loop + 1 )):
         
         raw_encoder_inputs, raw_encoderR_inputs, raw_encoder_seq, raw_context_seq, raw_encoderR_seq, raw_target_label = batch_gen.get_batch(
                                                                             data=data,
