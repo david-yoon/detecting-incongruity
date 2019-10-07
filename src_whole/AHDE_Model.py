@@ -10,26 +10,30 @@ from tensorflow.contrib import rnn
 from tensorflow.contrib.rnn import DropoutWrapper 
 
 from tensorflow.core.framework import summary_pb2
+from random import shuffle
 
 from AHDE_process_data import *
 from AHDE_evaluation import *
 from layers import add_GRU
 
+import os
+import time
+import argparse
+import datetime
+from random import shuffle
 
 class AttnHrDualEncoderModel:
     
     
-    def __init__(self, 
-                 params,
-                 voca_size, batch_size,
+    def __init__(self, params, voca_size, batch_size,
                  encoder_size, context_size, encoderR_size, 
                  num_layer, hidden_dim,
                  num_layer_con, hidden_dim_con,
                  lr, embed_size, 
-                 use_glove, fix_embed):
+                 use_glove, fix_embed,
+                 memory_dim, topic_size):
         
         self.params = params
-        
         self.source_vocab_size = voca_size
         self.target_vocab_size = voca_size
         self.batch_size = batch_size
@@ -48,8 +52,11 @@ class AttnHrDualEncoderModel:
         self.dr_text_in   = self.params.dr_text_in
         self.dr_text_out = self.params.dr_text_out
         self.dr_con_in   = self.params.dr_con_in
-        self.dr_con_out = self.params.dr_con_out
+        self.dr_con_out  = self.params.dr_con_out
         
+        self.memory_dim = memory_dim
+        self.topic_size = topic_size
+    
         self.encoder_inputs = []
         self.context_inputs = []
         self.encoderR_inputs =[]
@@ -299,7 +306,7 @@ class AttnHrDualEncoderModel:
         with tf.name_scope('optimizer') as scope:
             opt_func = tf.train.AdamOptimizer(learning_rate=self.lr)
             gvs = opt_func.compute_gradients(self.loss)
-            capped_gvs = [(tf.clip_by_norm(t=grad, clip_norm=1), var) for grad, var in gvs]
+            capped_gvs = [(tf.clip_by_norm(t=grad, clip_norm=5), var) for grad, var in gvs]
             self.optimizer = opt_func.apply_gradients(grads_and_vars=capped_gvs, global_step=self.global_step)
     
     
@@ -324,3 +331,349 @@ class AttnHrDualEncoderModel:
         self._create_output_layers()
         self._create_optimizer()
         self._create_summary()
+
+        
+# for training         
+def train_step(sess, model, batch_gen):
+    raw_encoder_inputs, raw_encoderR_inputs, raw_encoder_seq, raw_context_seq, raw_encoderR_seq, raw_target_label = batch_gen.get_batch(
+                                        data=batch_gen.train_set,
+                                        batch_size=model.batch_size,
+                                        encoder_size=model.encoder_size,
+                                        context_size=model.context_size,
+                                        encoderR_size=model.encoderR_size,
+                                        is_test=False
+                                        )
+
+    # prepare data which will be push from pc to placeholder
+    input_feed = {}
+    
+    input_feed[model.encoder_inputs] = raw_encoder_inputs
+    input_feed[model.encoderR_inputs] = raw_encoderR_inputs
+
+    input_feed[model.encoder_seq_length] = raw_encoder_seq
+    input_feed[model.context_seq_length] = raw_context_seq
+    input_feed[model.encoderR_seq_length] = raw_encoderR_seq
+
+    input_feed[model.y_label] = raw_target_label
+    
+    input_feed[model.dr_text_in_ph] = model.dr_text_in
+    input_feed[model.dr_text_out_ph] = model.dr_text_out
+    
+    input_feed[model.dr_con_in_ph] = model.dr_con_in
+    input_feed[model.dr_con_out_ph] = model.dr_con_out
+    
+    _, summary = sess.run([model.optimizer, model.summary_op], input_feed)
+    
+    return summary
+
+    
+def train_model(model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_dir_name='default'):
+    
+    saver = tf.train.Saver()
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth = True
+    
+    summary = None
+    dev_summary = None
+    
+    with tf.Session(config=config) as sess:
+        
+        sess.run(tf.global_variables_initializer())
+        early_stop_count = model.params.MAX_EARLY_STOP_COUNT
+        
+        if model.use_glove == 1:
+            sess.run(model.embedding_init, feed_dict={ model.embedding_placeholder: batch_gen.get_glove() })
+            print 'use pre-trained embedding vector'
+
+        
+        ckpt = tf.train.get_checkpoint_state(os.path.dirname('save/' + graph_dir_name + '/'))
+        if ckpt and ckpt.model_checkpoint_path:
+            print ('from check point!!!')
+            saver.restore(sess, ckpt.model_checkpoint_path)
+            
+
+        writer = tf.summary.FileWriter('./graph/'+graph_dir_name, sess.graph)
+
+        initial_time = time.time()
+        
+        MIN_CE = 1000000
+        dev_accr = 0
+        test_accr = 0
+        
+        best_dev_accr = 0
+        best_test_accr = 0
+        best_test_auroc = 0
+        
+        for index in xrange(num_train_steps):
+
+            try:
+                # run train 
+                summary = train_step(sess, model, batch_gen)
+                writer.add_summary( summary, global_step=model.global_step.eval() )
+                
+            except:
+                print "excepetion occurs in train step"
+                pass
+                
+            
+            # run validation
+            if (index + 1) % valid_freq == 0:
+                
+                dev_ce, dev_accr, dev_probs, dev_auroc, dev_summary = run_test(sess=sess, model=model, batch_gen=batch_gen,
+                                             data=batch_gen.valid_set)
+                
+                writer.add_summary( dev_summary, global_step=model.global_step.eval() )
+                
+                end_time = time.time()
+
+                if index > model.params.CAL_ACCURACY_FROM:
+
+                    if ( dev_ce < MIN_CE ):
+                        MIN_CE = dev_ce
+
+                        # save best result
+                        if is_save is 1:
+                            saver.save(sess, 'save/' + graph_dir_name + '/', model.global_step.eval() )
+
+                        early_stop_count = model.params.MAX_EARLY_STOP_COUNT
+                        
+                        test_ce, test_accr, test_probs, test_auroc, _ = run_test(sess=sess, model=model, batch_gen=batch_gen,
+                                            data=batch_gen.test_set)
+                        
+                        best_dev_accr = dev_accr
+                        best_test_accr = test_accr
+                        best_test_auroc = test_auroc
+                        
+                    else:
+                        # early stopping
+                        if early_stop_count == 0:
+                            print "early stopped by no improvement: ", model.params.MAX_EARLY_STOP_COUNT
+                            break
+                             
+                        test_accr = 0
+                        early_stop_count = early_stop_count -1
+
+                    print str( int(end_time - initial_time)/60 ) + " mins" + \
+                        " step/seen/itr: " + str( model.global_step.eval() ) + "/ " + \
+                                               str( model.global_step.eval() * model.batch_size ) + "/" + \
+                                               str( round( model.global_step.eval() * model.batch_size / float(len(batch_gen.train_set)), 2)  ) + \
+                        "\tval: " + '{:.3f}'.format(dev_accr)  +  \
+                        "  test: " + '{:.3f}'.format(test_accr) + \
+                        "  troc: " + '{:.3f}'.format(test_auroc) + \
+                        "  loss: " + '{:.2f}'.format(dev_ce)    
+                
+        writer.close()
+
+        
+        if (model.params.LAST_EVAL_TRAINSET):
+        
+            train_ce, train_accr, _, _, _ = run_test(sess=sess, model=model, batch_gen=batch_gen,
+                                                                     data=batch_gen.train_set)
+
+            print str( int(end_time - initial_time)/60 ) + " mins" + \
+                            " step/seen/itr: " + str( model.global_step.eval() ) + "/ " + \
+                                                   str( model.global_step.eval() * model.batch_size ) + "/" + \
+                                                   str( round( model.global_step.eval() * model.batch_size / float(len(batch_gen.train_set)), 2)  ) + \
+                            "\tval: " + '{:.3f}'.format(dev_accr)  +  \
+                            "  test: " + '{:.3f}'.format(test_accr) + \
+                            "  troc: " + '{:.3f}'.format(test_auroc) + \
+                            "  train_accr: " + '{:.3f}'.format(train_accr)    
+
+        
+        # result logging to file
+        with open('./TEST_run_result.txt', 'a') as f:
+            f.write(
+                    #datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + '\t' + \
+                    graph_dir_name + '\t' + \
+                    str('d_accr:\t') + str(best_dev_accr) + '\t' + \
+                    str('t_accr:\t') + str(best_test_accr) + '\t' + \
+                    str('t_auroc:\t') + str(best_test_auroc) + '\t' + \
+                    '\n') 
+
+
+def create_dir(dir_name):
+    if not os.path.isdir(dir_name):
+        os.mkdir(dir_name)
+        
+        
+def main(params, data_path, batch_size, encoder_size, context_size, encoderR_size, num_layer, hidden_dim, num_layer_con, hidden_dim_con,
+         embed_size, num_train_steps, lr, valid_freq, is_save, graph_dir_name, is_test, 
+         use_glove, fix_embed,
+         memory_dim, topic_size):
+    
+    if is_save is 1:
+        create_dir('save/')
+        create_dir('save/'+ graph_dir_name )
+    
+    create_dir('graph/')
+    create_dir('graph/' + graph_dir_name )
+    
+    batch_gen = ProcessData(is_test=is_test, params=params, data_path=data_path)
+    if is_test == 1:
+        valid_freq = 100
+    
+    model = AttnHrDualEncoderModel(
+                               params=params, 
+                               voca_size=len(batch_gen.voca),
+                               batch_size=batch_size,
+                               encoder_size=encoder_size,
+                               context_size=context_size,
+                               encoderR_size=encoderR_size,
+                               num_layer=num_layer,                 
+                               hidden_dim=hidden_dim,
+                               num_layer_con=num_layer_con,
+                               hidden_dim_con=hidden_dim_con,
+                               lr=lr,
+                               embed_size=embed_size,
+                               use_glove = use_glove,
+                               fix_embed = fix_embed,
+                               memory_dim = memory_dim,
+                               topic_size=topic_size
+                               )
+    
+    model.build_graph()
+    
+    valid_freq = int( len(batch_gen.train_set) * params.EPOCH_PER_VALID_FREQ / float(batch_size)  ) + 1
+    train_model(model, batch_gen, num_train_steps, valid_freq, is_save, graph_dir_name)
+    
+if __name__ == '__main__':
+    
+    p = argparse.ArgumentParser()
+    p.add_argument('--data_path', type=str, default='../data/')
+    
+    p.add_argument('--batch_size', type=int, default=256)
+    p.add_argument('--encoder_size', type=int, default=80)
+    p.add_argument('--context_size', type=int, default=10)
+    p.add_argument('--encoderR_size', type=int, default=80)
+    
+    # siaseme RNN
+    p.add_argument('--num_layer', type=int, default=2)
+    p.add_argument('--hidden_dim', type=int, default=300)
+    
+    # context RNN
+    p.add_argument('--num_layer_con', type=int, default=2)
+    p.add_argument('--hidden_dim_con', type=int, default=300)
+    
+    p.add_argument('--embed_size', type=int, default=200)
+    p.add_argument('--num_train_steps', type=int, default=10000)
+    p.add_argument('--lr', type=float, default=1e-1)
+    p.add_argument('--valid_freq', type=int, default=500)
+    p.add_argument('--is_save', type=int, default=0)
+    p.add_argument('--graph_prefix', type=str, default="default")
+    
+    p.add_argument('--is_test', type=int, default=0)
+    p.add_argument('--use_glove', type=int, default=0)
+    p.add_argument('--fix_embed', type=int, default=0)
+    
+    # latent topic
+    p.add_argument('--memory_dim', type=int, default=32)
+    p.add_argument('--topic_size', type=int, default=0)
+    
+    p.add_argument('--corpus', type=str, default='')
+    
+    args = p.parse_args()
+    
+    graph_name = args.graph_prefix + \
+                    '_b' + str(args.batch_size) + \
+                    '_es' + str(args.encoder_size) + \
+                    '_eRs' + str(args.encoderR_size) + \
+                    '_cs' + str(args.context_size) + \
+                    '_L' + str(args.num_layer) + \
+                    '_H' + str(args.hidden_dim) + \
+                    '_Lc' + str(args.num_layer_con) + \
+                    '_Hc' + str(args.hidden_dim_con) + \
+                    '_G' + str(args.use_glove) + \
+                    '_FIX' + str(args.fix_embed) + \
+                    '_M' + str(args.memory_dim) + \
+                    '_T' + str(args.topic_size)
+                    
+                    
+    if args.corpus == ('aaai-19_whole'):
+        from params import Params
+        print 'aaai-19'
+        _params    = Params()
+        
+    if args.corpus == ('nela-17_whole'):
+        from params import Params_NELA_17
+        print 'nela-17'
+        _params    = Params_NELA_17()
+    
+                    
+    if _params.dr_text_in   != 1.0 : graph_name = graph_name + '_drTi' +str(_params.dr_text_in)
+    if _params.dr_text_out != 1.0 : graph_name = graph_name + '_drTo' +str(_params.dr_text_out)
+    if _params.dr_con_in   != 1.0 : graph_name = graph_name + '_drCi' +str(_params.dr_con_in)
+    if _params.dr_con_out != 1.0 : graph_name = graph_name + '_drCo' +str(_params.dr_con_out)
+                    
+    if _params.is_text_encoding_bidir  : graph_name = graph_name + '_Tbi'
+    if _params.is_chunk_encoding_bidir : graph_name = graph_name + '_Cbi'
+    
+    if _params.is_text_residual  : graph_name = graph_name + '_TResi'
+    if _params.is_chunk_residual : graph_name = graph_name + '_CResi'
+    
+    if _params.add_attention           : graph_name = graph_name + '_Attn'
+    
+    graph_name = graph_name + '_' + datetime.datetime.now().strftime("%m-%d-%H-%M")
+    
+    
+    print'[INFO] data:\t\t', args.data_path
+    print'[INFO] params:\t\t', args.corpus
+    
+    print'[INFO] batch:\t\t', args.batch_size
+    
+    print'[INFO] encoder_size:\t', args.encoder_size
+    print'[INFO] context_size:\t', args.context_size
+    print'[INFO] encoderR_size:\t', args.encoderR_size
+    
+    print'[INFO] num_layer:\t', args.num_layer
+    print'[INFO] hidden_dim:\t', args.hidden_dim
+    
+    print'[INFO] num_layer_con:\t', args.num_layer_con
+    print'[INFO] hidden_dim_con:\t', args.hidden_dim_con
+    print'[INFO] embed_size:\t', args.embed_size
+    
+    print'[INFO] dr_text_in:\t', _params.dr_text_in
+    print'[INFO] dr_text_out:\t', _params.dr_text_out
+    print'[INFO] dr_con_in:\t', _params.dr_con_in
+    print'[INFO] dr_con_out:\t', _params.dr_con_out
+    
+    
+    print'[INFO] reverse_bw:\t', _params.reverse_bw
+    print'[INFO] is_text_encoding_bidir:\t', _params.is_text_encoding_bidir
+    print'[INFO] is_chunk_encoding_bidir:\t', _params.is_chunk_encoding_bidir
+    print'[INFO] is_text_residual:\t', _params.is_text_residual
+    print'[INFO] is_chunk_residual:\t', _params.is_chunk_residual
+    
+    print'[INFO] add_attention:\t', _params.add_attention
+    print'[INFO] add_LTC:\t\t', _params.add_LTC
+    
+    print'[INFO] lr:\t\t', args.lr
+    print'[INFO] valid_freq:\t', args.valid_freq
+    print'[INFO] is_save:\t\t', args.is_save
+
+    print'[INFO] is_test:\t\t', args.is_test
+    print'[INFO] use_glove:\t', args.use_glove
+    print'[INFO] fix_embed:\t', args.fix_embed
+    
+    main(
+        params=_params,
+        data_path=args.data_path,
+        batch_size=args.batch_size,
+        encoder_size=args.encoder_size,
+        context_size=args.context_size,
+        encoderR_size=args.encoderR_size,
+        num_layer=args.num_layer,
+        hidden_dim=args.hidden_dim,
+        num_layer_con=args.num_layer_con,
+        hidden_dim_con=args.hidden_dim_con,
+        embed_size=args.embed_size, 
+        num_train_steps=args.num_train_steps,
+        lr=args.lr,
+        valid_freq=args.valid_freq,
+        is_save=args.is_save,
+        graph_dir_name=graph_name,
+        is_test=args.is_test,
+        use_glove=args.use_glove,
+        fix_embed=args.fix_embed,
+        memory_dim=args.memory_dim,
+        topic_size=args.topic_size
+        )

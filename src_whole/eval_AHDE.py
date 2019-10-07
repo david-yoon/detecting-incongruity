@@ -17,29 +17,33 @@ from random import shuffle
 from params import Params
 
 
-def main(model_path, batch_size, encoder_size, context_size, encoderR_size, num_layer, hidden_dim, num_layer_con, hidden_dim_con,
+def main(params, data_path, batch_size, encoder_size, context_size, encoderR_size, num_layer, hidden_dim, num_layer_con, hidden_dim_con,
          embed_size, num_train_steps, lr, valid_freq, is_save, is_test, 
          use_glove, fix_embed,
-         memory_dim, topic_size):
+         memory_dim, topic_size,
+         model_path):
 
     
-    batch_gen = ProcessData(is_test=True)
-    
+    batch_gen = ProcessData(is_test=True, params=params, data_path=data_path)
+        
     model = AttnHrDualEncoderModel(
-                                                voca_size=len(batch_gen.voca),
-                                                batch_size=batch_size,
-                                                encoder_size=encoder_size,
-                                                context_size = context_size,
-                                                encoderR_size=encoderR_size,
-                                                num_layer=num_layer,
-                                                hidden_dim=hidden_dim,
-                                                num_layer_con=num_layer_con,
-                                                hidden_dim_con=hidden_dim_con,
-                                                lr = lr,
-                                                embed_size=embed_size,
-                                                use_glove = 1,
-                                                fix_embed = fix_embed
-                                                )
+                                    params=params, 
+                                    voca_size=len(batch_gen.voca),
+                                    batch_size=batch_size,
+                                    encoder_size=encoder_size,
+                                    context_size = context_size,
+                                    encoderR_size=encoderR_size,
+                                    num_layer=num_layer,
+                                    hidden_dim=hidden_dim,
+                                    num_layer_con=num_layer_con,
+                                    hidden_dim_con=hidden_dim_con,
+                                    lr = lr,
+                                    embed_size=embed_size,
+                                    use_glove = 1,
+                                    fix_embed = fix_embed,
+                                    memory_dim=0,
+                                    topic_size=0
+                                )
         
     model.build_graph()
     
@@ -81,7 +85,8 @@ if __name__ == '__main__':
     
     p = argparse.ArgumentParser()
     
-    p.add_argument('--model_path', type=str, default="")    
+    p.add_argument('--model_path', type=str, default="")
+    p.add_argument('--data_path', type=str, default='../data/')
     
     p.add_argument('--batch_size', type=int, default=256)
     p.add_argument('--encoder_size', type=int, default=80)
@@ -111,10 +116,23 @@ if __name__ == '__main__':
     p.add_argument('--memory_dim', type=int, default=32)
     p.add_argument('--topic_size', type=int, default=0)
     
+    p.add_argument('--corpus', type=str, default='')
+    
     args = p.parse_args()
     
+    if args.corpus == ('aaai-19_whole'):
+        from params import Params
+        print 'aaai-19'
+        _params    = Params()
+        
+    if args.corpus == ('nela-17_whole'):
+        from params import Params_NELA_17
+        print 'nela-17'
+        _params    = Params_NELA_17()
+    
     main(
-        model_path=args.model_path,
+        params=_params,
+        data_path=args.data_path,
         batch_size=args.batch_size,
         encoder_size=args.encoder_size,
         context_size=args.context_size,
@@ -132,5 +150,6 @@ if __name__ == '__main__':
         use_glove=args.use_glove,
         fix_embed=args.fix_embed,
         memory_dim=args.memory_dim,
-        topic_size=args.topic_size
+        topic_size=args.topic_size,
+        model_path=args.model_path
         )

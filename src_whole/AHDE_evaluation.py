@@ -9,6 +9,7 @@ from random import shuffle
 import numpy as np
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import roc_auc_score
+from tqdm import tqdm
 
 """
     desc  : 
@@ -24,7 +25,7 @@ from sklearn.metrics import roc_auc_score
         probs  : 
         labels : 
 """
-def run_test(sess, model, batch_gen, data, IS_TEST=False):
+def run_test(sess, model, batch_gen, data):
     
     batch_ce = []
     labels = []
@@ -37,7 +38,7 @@ def run_test(sess, model, batch_gen, data, IS_TEST=False):
     itr_loop = len(data) / model.batch_size
     
     # run 1 more time ( for batch remaining )
-    for test_itr in xrange( itr_loop + 1 ):
+    for test_itr in tqdm( xrange(itr_loop + 1) ):
         
         raw_encoder_inputs, raw_encoderR_inputs, raw_encoder_seq, raw_context_seq, raw_encoderR_seq, raw_target_label = batch_gen.get_batch(
                                                                             data=data,
@@ -92,21 +93,17 @@ def run_test(sess, model, batch_gen, data, IS_TEST=False):
     accr = accuracy_score(y_true=labels, y_pred=pred_from_probs)
     auroc = roc_auc_score(y_true=labels, y_score=probs)
     
-    #with open('./output.txt', 'wb') as f:
-    #    for pr in probs:
-    #        f.write(str(pr[0]) + '\n')
+    '''
+    with open('./output.txt', 'wb') as f:
+        for pr in probs:
+            f.write(str(pr[0]) + '\n')
+    '''
     
     sum_batch_ce = sum(batch_ce)
     
-    if (IS_TEST):
-        value1 = summary_pb2.Summary.Value(tag="test_loss", simple_value=sum_batch_ce)
-        value2 = summary_pb2.Summary.Value(tag="test_accuracy", simple_value=accr )
-        value3 = summary_pb2.Summary.Value(tag="test_auroc", simple_value=auroc )
-    else:
-        value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
-        value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
-        value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
-        
+    value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
+    value2 = summary_pb2.Summary.Value(tag="valid_accuracy", simple_value=accr )
+    value3 = summary_pb2.Summary.Value(tag="valid_auroc", simple_value=auroc )
     summary = summary_pb2.Summary(value=[value1, value2, value3])
     
     return sum_batch_ce, accr, probs, auroc, summary

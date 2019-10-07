@@ -7,17 +7,21 @@ what    : AHDE data process
 import numpy as np
 import random
 import pickle
+from tqdm import tqdm
+
 
 
 class ProcessData:
     
-    def __init__(self, params, is_test=False):
+    def __init__(self, is_test, params, data_path='../data/', evaluation_file_name=''):
         
         print 'IS_TEST = ' + str(is_test)
         
         self.params = params
+        self.data_path = data_path
         
         self.is_test = is_test
+        self.evaluation_file_name = evaluation_file_name
         
         self.voca = None
         self.pad_index = 0
@@ -43,11 +47,11 @@ class ProcessData:
     def load_data(self):
         
         if self.params.IS_DEBUG :
-            print ('load data : DEBUG mode', self.params.DATA_DEBUG_TITLE)
+            print 'load data : DEBUG mode'
             
-            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_TITLE)
-            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_BODY)
-            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_DEBUG_LABEL)
+            self.test_data['c'] = np.load(self.data_path + self.params.DATA_DEBUG_TITLE)
+            self.test_data['r'] = np.load(self.data_path + self.params.DATA_DEBUG_BODY)
+            self.test_data['y'] = np.load(self.data_path + self.params.DATA_DEBUG_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -58,11 +62,11 @@ class ProcessData:
             self.valid_data['y'] = self.test_data['y']
             
         elif self.is_test:
-            print ('load data : TEST mode', self.params.DATA_TEST_TITLE)
+            print 'load data : TEST mode'
             
-            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_TITLE)
-            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_BODY)
-            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
+            self.test_data['c'] = np.load(self.data_path + self.params.DATA_TEST_TITLE)
+            self.test_data['r'] = np.load(self.data_path + self.params.DATA_TEST_BODY)
+            self.test_data['y'] = np.load(self.data_path + self.params.DATA_TEST_LABEL)
             
             self.train_data['c'] = self.test_data['c']
             self.train_data['r'] = self.test_data['r']
@@ -73,44 +77,52 @@ class ProcessData:
             self.valid_data['y'] = self.test_data['y']
 
         else:
-            print ('load data : TRAIN mode', self.params.DATA_TRAIN_TITLE)
-            self.train_data['c'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_TITLE)
-            self.train_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_BODY)
-            self.train_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_TRAIN_LABEL)
+            print 'load data : TRAIN mode'
+            self.train_data['c'] = np.load(self.data_path + self.params.DATA_TRAIN_TITLE)
+            self.train_data['r'] = np.load(self.data_path + self.params.DATA_TRAIN_BODY)
+            self.train_data['y'] = np.load(self.data_path + self.params.DATA_TRAIN_LABEL)
 
-            self.valid_data['c'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_TITLE)
-            self.valid_data['r'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_BODY)
-            self.valid_data['y'] = np.load(self.params.DATA_DIR +  self.params.DATA_DEV_LABEL)
+            self.valid_data['c'] = np.load(self.data_path + self.params.DATA_DEV_TITLE)
+            self.valid_data['r'] = np.load(self.data_path + self.params.DATA_DEV_BODY)
+            self.valid_data['y'] = np.load(self.data_path + self.params.DATA_DEV_LABEL)
             
-            self.test_data['c']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_TITLE)
-            self.test_data['r']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_BODY)
-            self.test_data['y']  = np.load(self.params.DATA_DIR +  self.params.DATA_TEST_LABEL)
-                    
-        with open(self.params.DATA_DIR +  self.params.VOCA_FILE_NAME) as f:
-                self.voca = f.readlines()
-                self.voca = [x.strip() for x in self.voca]
+            self.test_data['c'] = np.load(self.data_path  + self.params.DATA_TEST_TITLE)
+            self.test_data['r'] = np.load(self.data_path  + self.params.DATA_TEST_BODY)
+            self.test_data['y'] = np.load(self.data_path  + self.params.DATA_TEST_LABEL)
+            
+        self.voca = pickle.load(open(self.data_path + self.params.VOCA_FILE_NAME, 'r') )
         
-        print 'add pad index as : ' + str(self.params.pad_index)
-        self.pad_index = self.params.pad_index
+        print 'add pad index as : ' + str(self.voca[''])
+        self.pad_index = self.voca['']
+        
+        for w in self.voca:
+            self.index2word[self.voca[w]] = w
         
         print '[completed] load data'
         print 'voca size (include _PAD_, _UNK_): ' + str( len(self.voca) )
         
-
+    """
+    def func(input) :
+        # <EOS> == 3
+        return ' '.join(str(e) for e in input).split(' 3 ')[:-1]
+    """    
+        
     # create train set : 
     # source_ids : 
     # target_ids : 
     # convert to soucre, target, label
     def create_data_set(self, input_data, output_set, set_type):
         
+        print 'create_datat_set (delimiter <EOP>): ', self.voca['<EOP>']
+        
         if self.params.IS_DEBUG is not True:
             if self.is_test & (set_type != 'TEST') : return
         
         data_len = len(input_data['c'])
         
-        for index in xrange(data_len):
+        for index in tqdm( xrange(data_len) ):
             
-            delimiter = ' ' +  str(self.params.chunk_tkn_index) + ' '
+            delimiter = ' ' +  str(self.voca['<EOP>']) + ' '
             # last == padding
             turn =[x.strip() for x in (' '.join(str(e) for e in input_data['r'][index])).split(delimiter)[:-1] ]
             turn = [ x for x in turn if len(x) >1]
@@ -133,7 +145,7 @@ class ProcessData:
     def get_glove(self):
         
         print 'load.... pre-trained embedding : ' + self.params.GLOVE_FILE_NAME
-        self.W_glove_init = np.load(open(self.params.DATA_DIR + self.params.GLOVE_FILE_NAME, 'r'))
+        self.W_glove_init = np.load(open(self.data_path + self.params.GLOVE_FILE_NAME, 'r'))
         
         return self.W_glove_init
     
