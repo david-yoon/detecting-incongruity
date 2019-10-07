@@ -6,7 +6,7 @@ data/aaai-19
 data/nela-17
 data/embedding
 *.pkl
-raw
+data/raw
 
 # too big
 final_model
