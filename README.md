@@ -104,7 +104,7 @@ cite
 -------------
 - Please cite our paper, when you use our code | dataset | model
 
-	> @inproceedings{yoon2019detecting,<br>
+> @inproceedings{yoon2019detecting,<br>
 > title={Detecting Incongruity between News Headline and Body Text via a Deep Hierarchical Encoder},<br>
 > author={Yoon, Seunghyun and Park, Kunwoo and Shin, Joongbo and Lim, Hongjun and Won, Seungpil and Cha, Meeyoung and Jung, Kyomin},<br>
 >  booktitle={Proceedings of the AAAI Conference on Artificial Intelligence},<br>
