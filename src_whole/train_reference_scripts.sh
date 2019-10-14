@@ -21,4 +21,4 @@ CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 128 --encoder_size 200 
 # CON  :        13.5,  11.6,   367,   36.7,     48.3    --> context_size
 # BODY in CON :  51.1,  50.5,  4709,  152.2,   202.7    --> encoder_size
 ################################################################################
-CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 64 --encoder_size 200 --context_size 50 --encoderR_size 25 --num_layer 1 --hidden_dim 100  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'ahde' --corpus 'nela-17_whole' --data_path '../data/target_nela-17_whole/'
+CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 64 --encoder_size 200 --context_size 50 --encoderR_size 25 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'ahde' --corpus 'nela-17_whole' --data_path '../data/target_nela-17_whole/'
