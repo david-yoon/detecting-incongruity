@@ -573,32 +573,41 @@ if __name__ == '__main__':
     
     args = p.parse_args()
     
-    graph_name = args.graph_prefix + \
-                    '_b' + str(args.batch_size) + \
-                    '_es' + str(args.encoder_size) + \
-                    '_eRs' + str(args.encoderR_size) + \
-                    '_cs' + str(args.context_size) + \
-                    '_L' + str(args.num_layer) + \
-                    '_H' + str(args.hidden_dim) + \
-                    '_Lc' + str(args.num_layer_con) + \
-                    '_Hc' + str(args.hidden_dim_con) + \
-                    '_G' + str(args.use_glove) + \
-                    '_FIX' + str(args.fix_embed) + \
-                    '_M' + str(args.memory_dim) + \
-                    '_T' + str(args.topic_size)
-                    
+    graph_name = ''
                     
     if args.corpus == ('aaai-19_whole'):
         from params import Params
         print 'aaai-19'
         _params    = Params()
+        graph_name = 'aaai-19'
         
     if args.corpus == ('nela-17_whole'):
         from params import Params_NELA_17
         print 'nela-17'
         _params    = Params_NELA_17()
+        graph_name = 'nela-17'
     
                     
+    graph_name = graph_name + '_' + \
+                args.graph_prefix + \
+                '_b' + str(args.batch_size) + \
+                '_es' + str(args.encoder_size) + \
+                '_eRs' + str(args.encoderR_size) + \
+                '_cs' + str(args.context_size) + \
+                '_L' + str(args.num_layer) + \
+                '_H' + str(args.hidden_dim) + \
+                '_Lc' + str(args.num_layer_con) + \
+                '_Hc' + str(args.hidden_dim_con) + \
+                '_G' + str(args.use_glove) + \
+                '_FIX' + str(args.fix_embed)
+                
+    
+    if _params.add_LTC:
+        graph_name = graph_name + \
+                    '_M' + str(args.memory_dim) + \
+                    '_T' + str(args.topic_size)
+
+        
     if _params.dr_text_in   != 1.0 : graph_name = graph_name + '_drTi' +str(_params.dr_text_in)
     if _params.dr_text_out != 1.0 : graph_name = graph_name + '_drTo' +str(_params.dr_text_out)
     if _params.dr_con_in   != 1.0 : graph_name = graph_name + '_drCi' +str(_params.dr_con_in)
