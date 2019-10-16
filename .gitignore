@@ -4,6 +4,7 @@
 # data
 data/aaai-19
 data/nela-17
+data/nela-18
 data/embedding
 *.pkl
 data/raw

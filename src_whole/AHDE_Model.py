@@ -587,7 +587,13 @@ if __name__ == '__main__':
         _params    = Params_NELA_17()
         graph_name = 'nela-17'
     
+    if args.corpus == ('nela-18_whole'):
+        from params import Params_NELA_18
+        print 'nela-18'
+        _params    = Params_NELA_18()
+        graph_name = 'nela-18'
                     
+            
     graph_name = graph_name + '_' + \
                 args.graph_prefix + \
                 '_b' + str(args.batch_size) + \

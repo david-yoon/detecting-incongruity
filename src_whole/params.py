@@ -114,3 +114,51 @@ class Params_NELA_17(Params):
     LAST_EVAL_TRAINSET       = True
     IS_DEBUG                 = False     # use short dataset
     
+    
+class Params_NELA_18(Params):
+    
+    ################################
+    #     dataset
+    ################################
+    
+    
+    ################################
+    #     train
+    ################################
+    till_max_epoch          = False
+    num_till_max_epoch      = 8
+    
+    CAL_ACCURACY_FROM       = 0
+    MAX_EARLY_STOP_COUNT    = 4
+    EPOCH_PER_VALID_FREQ    = 0.2
+    is_embeddign_train      = True     # True is better
+
+    dr_text_in      = 0.7
+    dr_text_out     = 1.0
+    dr_con_in       = 1.0   
+    dr_con_out      = 1.0
+    
+    
+    ################################
+    #     model
+    ################################
+    reverse_bw               = True
+    is_text_encoding_bidir   = False
+    is_chunk_encoding_bidir  = True
+    
+    is_text_residual         = False
+    is_chunk_residual        = False
+    
+    add_attention            = True
+    add_LTC                  = False
+    LTC_topic_size           = 3
+    LTC_memory_dim           = 256
+    LTC_dr_prob              = 0.8
+    
+    
+    ################################
+    #     etc
+    ################################
+    LAST_EVAL_TRAINSET       = True
+    IS_DEBUG                     = False     # use short dataset
+    
