@@ -464,7 +464,7 @@ def train_model(model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_
                         early_stop_count = early_stop_count -1
 
                     print str( int(end_time - initial_time)/60 ) + " mins" + \
-                        " step/seen/itr: " + str( model.global_step.eval() ) + "/ " + \
+                        " step/seen/epoch: " + str( model.global_step.eval() ) + "/ " + \
                                                str( model.global_step.eval() * model.batch_size ) + "/" + \
                                                str( round( model.global_step.eval() * model.batch_size / float(len(batch_gen.train_set)), 2)  ) + \
                         "\tval: " + '{:.3f}'.format(dev_accr)  +  \
