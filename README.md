@@ -99,6 +99,10 @@ python AHDE_Model.py --batch_size 64 --encoder_size 200 --context_size 50 --enco
 ```
 
 
+Other implementation (pytorch version)
+-------------
+* <a href=https://github.com/minwhoo/detecting-incongruity-pytorch>Pytorch implementation [link] by M. Lee</a>
+* compatible with the preprocessed dataset
 
 cite
 -------------
@@ -112,4 +116,3 @@ cite
 >  pages={791--800},<br>
 >  year={2019}<br>
 > }
-	
