@@ -306,7 +306,7 @@ class AttnHrDualEncoderModel:
         with tf.name_scope('optimizer') as scope:
             opt_func = tf.train.AdamOptimizer(learning_rate=self.lr)
             gvs = opt_func.compute_gradients(self.loss)
-            capped_gvs = [(tf.clip_by_norm(t=grad, clip_norm=5), var) for grad, var in gvs]
+            capped_gvs = [(tf.clip_by_norm(t=grad, clip_norm=1), var) for grad, var in gvs]
             self.optimizer = opt_func.apply_gradients(grads_and_vars=capped_gvs, global_step=self.global_step)
     
     

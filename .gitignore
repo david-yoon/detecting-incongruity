@@ -8,6 +8,7 @@ data/nela-18
 data/embedding
 *.pkl
 data/raw
+*tar.gz*
 
 # too big
 final_model
