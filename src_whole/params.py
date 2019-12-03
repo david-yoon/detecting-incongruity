@@ -42,6 +42,10 @@ class Params:
     dr_con_in       = 1.0   
     dr_con_out      = 1.0
 
+    APPLY_LR_DECAY  = False
+    DECAY_FREQ      = 2.0   # epoch
+    DECAY_RATE      = 0.1   
+    
     ################################
     #     model
     ################################
@@ -90,6 +94,9 @@ class Params_NELA_17(Params):
     dr_con_in       = 1.0   
     dr_con_out      = 1.0
     
+    APPLY_LR_DECAY  = False
+    DECAY_FREQ      = 2.0   # epoch
+    DECAY_RATE      = 0.1 
     
     ################################
     #     model
@@ -155,10 +162,13 @@ class Params_NELA_18(Params):
     LTC_memory_dim           = 256
     LTC_dr_prob              = 0.8
     
+    APPLY_LR_DECAY  = False
+    DECAY_FREQ      = 2.0   # epoch
+    DECAY_RATE      = 0.1 
     
     ################################
     #     etc
     ################################
     LAST_EVAL_TRAINSET       = True
-    IS_DEBUG                     = False     # use short dataset
+    IS_DEBUG                 = False     # use short dataset
     

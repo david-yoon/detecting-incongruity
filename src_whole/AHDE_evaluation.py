@@ -67,7 +67,7 @@ def run_test(sess, model, batch_gen, data):
         input_feed[model.dr_text_out_ph] = 1.0
         input_feed[model.dr_con_in_ph]   = 1.0
         input_feed[model.dr_con_out_ph] = 1.0
-
+        
         input_feed[model.dr_memory_prob] = 1.0
 
         lo = None

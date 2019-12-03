@@ -17,6 +17,7 @@ from AHDE_evaluation import *
 from layers import add_GRU
 
 import os
+import sys
 import time
 import argparse
 import datetime
@@ -31,7 +32,7 @@ class AttnHrDualEncoderModel:
                  num_layer_con, hidden_dim_con,
                  lr, embed_size, 
                  use_glove, fix_embed,
-                 memory_dim, topic_size):
+                 memory_dim=0, topic_size=0):
         
         self.params = params
         self.source_vocab_size = voca_size
@@ -107,6 +108,8 @@ class AttnHrDualEncoderModel:
 
             self.dr_memory_prob = tf.placeholder(tf.float32, name="dropout_memory") # just for matching evaluation code with memory net version
 
+            self.lr_ph            = tf.placeholder(tf.float32, name="dropout_con_out")
+            
             # for using pre-trained embedding
             self.embedding_placeholder = tf.placeholder(tf.float32, shape=[self.source_vocab_size, self.embed_size], name="embedding_placeholder")
 
@@ -304,7 +307,7 @@ class AttnHrDualEncoderModel:
         print '[launch] create optimizer'
         
         with tf.name_scope('optimizer') as scope:
-            opt_func = tf.train.AdamOptimizer(learning_rate=self.lr)
+            opt_func = tf.train.AdamOptimizer(learning_rate=self.lr_ph)
             gvs = opt_func.compute_gradients(self.loss)
             capped_gvs = [(tf.clip_by_norm(t=grad, clip_norm=1), var) for grad, var in gvs]
             self.optimizer = opt_func.apply_gradients(grads_and_vars=capped_gvs, global_step=self.global_step)
@@ -334,7 +337,7 @@ class AttnHrDualEncoderModel:
 
         
 # for training         
-def train_step(sess, model, batch_gen):
+def train_step(sess, params, model, batch_gen, index):
     raw_encoder_inputs, raw_encoderR_inputs, raw_encoder_seq, raw_context_seq, raw_encoderR_seq, raw_target_label = batch_gen.get_batch(
                                         data=batch_gen.train_set,
                                         batch_size=model.batch_size,
@@ -362,12 +365,20 @@ def train_step(sess, model, batch_gen):
     input_feed[model.dr_con_in_ph] = model.dr_con_in
     input_feed[model.dr_con_out_ph] = model.dr_con_out
     
+    if params.APPLY_LR_DECAY:
+        run_per_epoch = len(batch_gen.train_set) / float(model.batch_size) * params.DECAY_FREQ
+        num_decay = int(index / run_per_epoch)
+        input_feed[model.lr_ph] = model.lr * pow(params.DECAY_RATE, num_decay)
+#         print('lr decay: index, num_per_epoch, num_decay, lr', index, run_per_epoch, num_decay, model.lr * pow(params.DECAY_RATE, num_decay))
+    else:
+        input_feed[model.lr_ph] = model.lr
+    
     _, summary = sess.run([model.optimizer, model.summary_op], input_feed)
     
     return summary
 
     
-def train_model(model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_dir_name='default'):
+def train_model(params, model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_dir_name='default'):
     
     saver = tf.train.Saver()
     config = tf.ConfigProto()
@@ -408,11 +419,12 @@ def train_model(model, batch_gen, num_train_steps, valid_freq, is_save=0, graph_
 
             try:
                 # run train 
-                summary = train_step(sess, model, batch_gen)
+                summary = train_step(sess, params, model, batch_gen, index)
                 writer.add_summary( summary, global_step=model.global_step.eval() )
                 
-            except:
+            except Exception as ex:
                 print "excepetion occurs in train step"
+                print ex
                 pass
                 
             
@@ -534,7 +546,7 @@ def main(params, data_path, batch_size, encoder_size, context_size, encoderR_siz
     model.build_graph()
     
     valid_freq = int( len(batch_gen.train_set) * params.EPOCH_PER_VALID_FREQ / float(batch_size)  ) + 1
-    train_model(model, batch_gen, num_train_steps, valid_freq, is_save, graph_dir_name)
+    train_model(params, model, batch_gen, num_train_steps, valid_freq, is_save, graph_dir_name)
     
 if __name__ == '__main__':
     
@@ -581,18 +593,21 @@ if __name__ == '__main__':
         _params    = Params()
         graph_name = 'aaai-19'
         
-    if args.corpus == ('nela-17_whole'):
+    elif args.corpus == ('nela-17_whole'):
         from params import Params_NELA_17
         print 'nela-17'
         _params    = Params_NELA_17()
         graph_name = 'nela-17'
     
-    if args.corpus == ('nela-18_whole'):
+    elif args.corpus == ('nela-18_whole'):
         from params import Params_NELA_18
         print 'nela-18'
         _params    = Params_NELA_18()
         graph_name = 'nela-18'
-                    
+      
+    else:
+        print('[ERROR] a corpus should be specified')
+        sys.exit()    
             
     graph_name = graph_name + '_' + \
                 args.graph_prefix + \
@@ -626,6 +641,8 @@ if __name__ == '__main__':
     if _params.is_chunk_residual : graph_name = graph_name + '_CResi'
     
     if _params.add_attention           : graph_name = graph_name + '_Attn'
+        
+    if _params.APPLY_LR_DECAY: graph_name = graph_name + '_lrDe'
     
     graph_name = graph_name + '_' + datetime.datetime.now().strftime("%m-%d-%H-%M")
     
@@ -662,6 +679,11 @@ if __name__ == '__main__':
     print'[INFO] add_LTC:\t\t', _params.add_LTC
     
     print'[INFO] lr:\t\t', args.lr
+    
+    if _params.APPLY_LR_DECAY:
+        print'[INFO] lr_decay_freq:\t', _params.DECAY_FREQ
+        print'[INFO] lr_decay_rate:\t', _params.DECAY_RATE
+    
     print'[INFO] valid_freq:\t', args.valid_freq
     print'[INFO] is_save:\t\t', args.is_save
 
