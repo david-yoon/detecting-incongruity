@@ -81,6 +81,14 @@ def main(params, data_path, batch_size, encoder_size, context_size, encoderR_siz
                 "  loss: " + '{:.2f}'.format(test_ce)  
     
     
+        # result logging to file
+        with open('./TEST_run_result.txt', 'a') as f:
+            f.write(
+                    model_path + '\t' + \
+                    str('t_accr:\t') + str(test_accr) + '\t' + \
+                    str('t_auroc:\t') + str(test_auroc) + '\t' + \
+                    '\n') 
+    
 if __name__ == '__main__':
     
     p = argparse.ArgumentParser()
@@ -125,11 +133,21 @@ if __name__ == '__main__':
         print 'aaai-19'
         _params    = Params()
         
-    if args.corpus == ('nela-17_whole'):
+    elif args.corpus == ('nela-17_whole'):
         from params import Params_NELA_17
         print 'nela-17'
         _params    = Params_NELA_17()
-    
+
+    elif args.corpus == ('nela-18_whole'):
+        from params import Params_NELA_18
+        print 'nela-18'
+        _params    = Params_NELA_18()
+        graph_name = 'nela-18'
+        
+    else:
+        print('[ERROR] a corpus should be specified')
+        sys.exit()  
+        
     main(
         params=_params,
         data_path=args.data_path,
