@@ -98,7 +98,13 @@ def run_test(sess, model, batch_gen, data):
         for pr in probs:
             f.write(str(pr[0]) + '\n')
     '''
-    
+
+    '''
+    with open('./output_predic.txt', 'wb') as f:
+        for pr in pred_from_probs:
+            f.write(str(pr) + '\n')
+    '''
+            
     sum_batch_ce = sum(batch_ce)
     
     value1 = summary_pb2.Summary.Value(tag="valid_loss", simple_value=sum_batch_ce)
