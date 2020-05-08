@@ -93,17 +93,15 @@ def run_test(sess, model, batch_gen, data):
     accr = accuracy_score(y_true=labels, y_pred=pred_from_probs)
     auroc = roc_auc_score(y_true=labels, y_score=probs)
     
-    '''
-    with open('./output.txt', 'wb') as f:
-        for pr in probs:
-            f.write(str(pr[0]) + '\n')
-    '''
+    if model.params.LOG_PREDICTION_AS_FILE:
+        with open('./output.txt', 'wb') as f:
+            for pr in probs:
+                f.write(str(pr[0]) + '\n')
 
-    '''
-    with open('./output_predic.txt', 'wb') as f:
-        for pr in pred_from_probs:
-            f.write(str(pr) + '\n')
-    '''
+        with open('./output_predic.txt', 'wb') as f:
+            for pr in pred_from_probs:
+                f.write(str(pr) + '\n')
+
             
     sum_batch_ce = sum(batch_ce)
     

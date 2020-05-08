@@ -148,6 +148,9 @@ if __name__ == '__main__':
         print('[ERROR] a corpus should be specified')
         sys.exit()  
         
+    print('[INFO] log prediction results')   
+    _params.LOG_PREDICTION_AS_FILE = True
+        
     main(
         params=_params,
         data_path=args.data_path,

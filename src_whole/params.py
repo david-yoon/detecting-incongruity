@@ -68,6 +68,7 @@ class Params:
     ################################
     LAST_EVAL_TRAINSET       = False
     IS_DEBUG                 = False     # use short dataset
+    LOG_PREDICTION_AS_FILE   = False
 
 
     
