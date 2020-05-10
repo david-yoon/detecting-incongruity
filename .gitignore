@@ -13,8 +13,8 @@ data/raw
 
 # too big
 final_model
-save
-graph
+save*
+graph*
 
 # log
 output.txt

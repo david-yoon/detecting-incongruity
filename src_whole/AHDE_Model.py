@@ -605,6 +605,12 @@ if __name__ == '__main__':
         _params    = Params_NELA_18()
         graph_name = 'nela-18'
       
+    elif args.corpus == ('news-19_whole'):
+        from params import Params_NEWS_19
+        print 'news-19'
+        _params    = Params_NEWS_19()
+        graph_name = 'news-19'
+    
     else:
         print('[ERROR] a corpus should be specified')
         sys.exit()    

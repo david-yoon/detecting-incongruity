@@ -36,3 +36,20 @@ CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 64 --encoder_size 200 -
 CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 180 --context_size 70 --encoderR_size 25 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'ahde' --corpus 'nela-18_whole' --data_path '../data/target_nela-18_whole/'
 
 
+
+################################################################################
+# NEWS-19 dataset       (avg, std, max, avg+2std(95%), avg+3std(99.7%)   - To be released
+# numpy (25, 2100)
+# TITLE:             10.4     3.7       65      17.9      21.7    --> encoderR_size
+# BODY :            690.1   472.1    27362    1634.8    2106.8
+# CON        :       14.9     8.1       51      31.1      39.2    --> context_size
+# BODY in CON :      45.4    43.0    27074     131.4     174.5    --> encoder_size
+################################################################################
+CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 170 --context_size 40 --encoderR_size 21 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'news-19-ahde' --corpus 'news-19_whole' --data_path '../data/target_news-19_whole/'
+
+
+
+
+
+
+
