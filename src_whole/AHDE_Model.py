@@ -495,6 +495,9 @@ def train_model(params, model, batch_gen, num_train_steps, valid_freq, is_save=0
         # result logging to file
         with open('./TEST_run_result.txt', 'a') as f:
             f.write(
+                     " step/seen/epoch: " + str( model.global_step.eval() ) + "/ " + \
+                       str( model.global_step.eval() * model.batch_size ) + "/" + \
+                       str( round( model.global_step.eval() * model.batch_size / float(len(batch_gen.train_set)), 2)  ) + '\n' + \
                     #datetime.datetime.now().strftime("%Y-%m-%d %H:%M") + '\t' + \
                     graph_dir_name + '\t' + \
                     str('d_accr:\t') + str(best_dev_accr) + '\t' + \
