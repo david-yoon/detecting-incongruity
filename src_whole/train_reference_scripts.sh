@@ -38,17 +38,25 @@ CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 180 -
 
 
 ################################################################################
-# NEWS-19 dataset       (avg, std, max, avg+2std(95%), avg+3std(99.7%)   - To be released
+# NEWS-19 (head-swap) (avg, std, max, avg+2std(95%), avg+3std(99.7%)   - To be released
 # numpy (25, 2100)
-# TITLE:             10.4     3.7       65      17.9      21.7    --> encoderR_size
-# BODY :            690.1   472.1    27362    1634.8    2106.8
-# CON        :       14.9     8.1       51      31.1      39.2    --> context_size
-# BODY in CON :      45.4    43.0    27074     131.4     174.5    --> encoder_size
+# TITLE:             11.0     3.9       65      18.8      22.7    --> encoderR_size
+# BODY :            694.4   470.0    27362    1634.4    2104.5
+# CON        :       15.4     8.3       51      32.2      40.6    --> context_size
+# BODY in CON :      43.9    42.6    27074     129.2     171.8    --> encoder_size
 ################################################################################
-CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 170 --context_size 40 --encoderR_size 21 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'news-19-ahde' --corpus 'news-19_whole' --data_path '../data/target_news-19_whole/'
+CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 170 --context_size 40 --encoderR_size 22 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'news-19-ahde' --corpus 'news-19_whole' --data_path '../data/target_news-19_headline/'
 
 
-
+################################################################################
+# NEWS-19 (para-swap) (avg, std, max, avg+2std(95%), avg+3std(99.7%)   - To be released
+# numpy (25, 2100)
+# TITLE:             11.0     3.8       57      18.8      22.7    --> encoderR_size
+# BODY :            760.6   504.7    27362    1770.1    2104.9
+# CON        :       16.7     9.2       96      35.2      44.4    --> context_size
+# BODY in CON :      44.4    43.0    27074     130.5     173.6    --> encoder_size
+################################################################################
+CUDA_VISIBLE_DEVICES=0 python AHDE_Model.py --batch_size 40 --encoder_size 170 --context_size 44 --encoderR_size 22 --num_layer 1 --hidden_dim 200  --num_layer_con 1 --hidden_dim_con 100 --embed_size 300 --use_glove 1 --lr 0.001 --num_train_steps 100000 --is_save 1 --graph_prefix 'news-19-ahde' --corpus 'news-19_whole' --data_path '../data/target_news-19_paragraph/'
 
 
 

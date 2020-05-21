@@ -190,7 +190,7 @@ class Params_NEWS_19(Params):
     
     CAL_ACCURACY_FROM       = 0
     MAX_EARLY_STOP_COUNT    = 5
-    EPOCH_PER_VALID_FREQ    = 0.1
+    EPOCH_PER_VALID_FREQ    = 0.2
     is_embeddign_train      = True     # True is better
 
     dr_text_in      = 0.7
