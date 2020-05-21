@@ -7,6 +7,7 @@ data/nela-17*
 data/nela-18*
 data/news-19*
 data/embedding
+data/paragraph_swap_news
 *.pkl
 data/raw
 *tar.gz*
