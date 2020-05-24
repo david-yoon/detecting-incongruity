@@ -91,7 +91,11 @@ def run_test(sess, model, batch_gen, data):
     pred_from_probs = [ 1 if x >= 0.5 else 0 for x in probs ]
     
     accr = accuracy_score(y_true=labels, y_pred=pred_from_probs)
-    auroc = roc_auc_score(y_true=labels, y_score=probs)
+    
+    if( np.sum(labels) == 0):
+        auroc = 0
+    else:
+        auroc = roc_auc_score(y_true=labels, y_score=probs)
     
     if model.params.LOG_PREDICTION_AS_FILE:
         with open('./output.txt', 'wb') as f:
