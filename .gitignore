@@ -6,6 +6,7 @@ data/aaai-19*
 data/nela-17*
 data/nela-18*
 data/news-19*
+data/real_world*
 data/embedding
 data/paragraph_swap_news
 *.pkl
