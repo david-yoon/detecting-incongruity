@@ -2,6 +2,7 @@
 *TEST*
 
 # data
+data/*
 data/aaai-19*
 data/nela-17*
 data/nela-18*
@@ -12,6 +13,7 @@ data/paragraph_swap_news
 *.pkl
 data/raw
 *tar.gz*
+*.txt
 
 # too big
 final_model
