@@ -189,7 +189,7 @@ class Params_NEWS_19(Params):
     num_till_max_epoch      = 8
     
     CAL_ACCURACY_FROM       = 0
-    MAX_EARLY_STOP_COUNT    = 5
+    MAX_EARLY_STOP_COUNT    = 4
     EPOCH_PER_VALID_FREQ    = 0.2
     is_embeddign_train      = True     # True is better
 
